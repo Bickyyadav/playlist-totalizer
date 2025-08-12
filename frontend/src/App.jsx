@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+// Removed dotenv import and config for frontend environment variables
 
 const PlaylistExtractor = () => {
   const [playlistURL, setPlaylistURL] = useState("");
+  const [playlistVideoId, setPlaylistVideoId] = useState("");
   const [totalTime, setTotalTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,21 +23,26 @@ const PlaylistExtractor = () => {
       const urlObj = new URL(playlistURL);
       const params = new URLSearchParams(urlObj.search);
       const key = params.get("list");
+      setPlaylistVideoId(key);
 
       if (!key) {
         setError("❌ Playlist ID not found in the URL.");
         setLoading(false);
         return;
       }
+      const PORT = import.meta.env.VITE_API_KEY_PORT;
 
       const response = await axios.post(
-        "http://localhost:8000/api",
-        { playlist: key },
+        `${PORT}api`,
+        {
+          playlist: playlistVideoId,
+        },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
+      console.log("🚀 ~ handleExtractAndSend ~ response:", response);
 
       if (response.data.success) {
         setTotalTime(response.data.playlistVideos);

@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -31,6 +31,7 @@ app.post("/api", async (req, res) => {
 
     if (playlist) {
       const youtubePlaylistLink = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlist}&maxResults=50&key=${process.env.YOUTUBE_API}`;
+
       const response = await axios.get(youtubePlaylistLink);
 
       const videoDetails = response.data.items.map((item) => ({
@@ -39,7 +40,7 @@ app.post("/api", async (req, res) => {
       }));
 
       let totalTimeInHMS = 0;
-      const EachVideoId = await Promise.all(
+      await Promise.all(
         videoDetails.map(async (item) => {
           const response = await axios.get(
             `https://www.googleapis.com/youtube/v3/videos`,
@@ -53,6 +54,7 @@ app.post("/api", async (req, res) => {
           );
           const TotalTime = await response.data.items[0].contentDetails
             .duration;
+
           const Iso8601InSecond = iso8601ToSeconds(TotalTime);
           totalTime.push(Iso8601InSecond);
         })
@@ -68,6 +70,7 @@ app.post("/api", async (req, res) => {
       res.status(400).json({ success: false, message: "someThing went wrong" });
     }
   } catch (error) {
+    console.log("🚀 ~ error:", error);
     res.status(400).json({ success: false, message: "someThing went wrong" });
   }
 });
