@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.status({ message: "api route hit successfully" });
+  res.json({ message: "api route hit successfully" });
 });
 
 app.post("/api", async (req, res) => {
