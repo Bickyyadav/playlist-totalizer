@@ -9,7 +9,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: "*" }));
+const allowedOrigins = [
+  "https://playlist-totalizer.vercel.app",
+  "https://playlist-totalizer-473xfr7w5-bickyyadavs-projects.vercel.app",
+  "http://localhost:3000",
+  "https://playlist-totalizer-473xfr7w5-bickyyadavs-projects.vercel.app/",
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(bodyParser.json());
