@@ -19,6 +19,10 @@ app.use(
 app.use(express.json());
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => {
+  res.status({ message: "api route hit successfully" });
+});
+
 app.post("/api", async (req, res) => {
   let totalTime = [];
 
